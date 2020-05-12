@@ -1,0 +1,12 @@
+h1{
+    color: blue;
+}
+#head {
+    float: center;
+    text-align: center;
+}
+
+#myChart {
+    height: 100%;
+    width: fit-content;
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>מפלס הכנרת</title>
+    <link rel="stylesheet" href="styles.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
+        integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
+</head>
+
+<body>
+    <div id="head">
+        <h1> מפלס המים בכנרת מעל הקו השחור מאז 1966</h1>
+    </div>
+    <div id="bottom">
+        <canvas id="myChart"></canvas>
+    </div>
+    <script>
+        const xs = [];
+        const ys = [];
+        getdata();
+        async function getdata() {
+            const response = await fetch('kinneret_level.csv');
+            const strings = await response.text();
+            const table = strings.split('\n');
+            table.forEach(element => {
+                col = element.split(',');
+                xs.push(col[0]);
+                ys.push(parseFloat(col[1]) + 214.87);
+            });
+        }
+        createChart();
+
+        function createChart() {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: xs,
+                    datasets: [{
+                        label: ':מפלס המים ביום זה',
+                        //backgroundColor: 'rgb(0, 99, 132)',
+                        borderColor: 'rgb(0, 0, 255)',
+                        data: ys,
+                        borderWidth: 1,
+                        fill: false,
+                        showLine: true,
+                        pointRadius: 0
+                    }]
+                },
+
+                // Configuration options go here
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks:{
+                                callback: function(value, index, values){
+                                    return value +' m';
+                                }
+                            }
+                        }]
+                    },
+                    plugins: {
+                        zoom: {
+                            // Container for pan options
+                            pan: {
+                                // Boolean to enable panning
+                                enabled: true,
+
+                                // Panning directions. Remove the appropriate direction to disable 
+                                // Eg. 'y' would only allow panning in the y direction
+                                mode: 'xy'
+                            },
+
+                            // Container for zoom options
+                            zoom: {
+                                // Boolean to enable zooming
+                                enabled: true,
+
+                                // Zooming directions. Remove the appropriate direction to disable 
+                                // Eg. 'y' would only allow zooming in the y direction
+                                mode: 'xy',
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>
