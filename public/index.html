@@ -2,9 +2,9 @@
 <html lang="he">
 
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>מפלס הכנרת</title>
-    <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
         integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous">
     </script>
@@ -24,15 +24,35 @@
         const ys = [];
         getdata();
         async function getdata() {
-            const response = await fetch('kinneret_level.csv');
-            const strings = await response.text();
-            const table = strings.split('\n');
-            table.forEach(element => {
-                col = element.split(',');
-                xs.push(col[0]);
-                ys.push(parseFloat(col[1]) + 214.87);
-            });
+            let url_path = 'https://data.gov.il/api/action/datastore_search?offset=';
+            let offset = 0;
+            let url_end = '&resource_id=2de7b543-e13d-4e7e-b4c8-56071bc4d3c8';
+            let total = 9015;
+            while (offset < total) {
+                let url = url_path  + offset + url_end;
+                const response = await fetch(url);
+                const json = await response.json();
+                let records = json.result.records;
+
+                let avg = 0;
+                let count = 0;
+                records.forEach(element => {                    
+                    avg += element['Kinneret_Level'];
+                    count++;
+                });
+                ys.push(avg/count);
+
+                let date = new Date(records[0]['Survey_Date']);
+                xs.push(date.getMonth() + "/" + date.getFullYear());
+                console.log(xs);
+                if (offset == 0)
+                    total = json.result.total;
+                offset += 100;
+                console.log(total + " " + offset);
+            }
         }
+
+
         createChart();
 
         function createChart() {
@@ -45,7 +65,7 @@
                 data: {
                     labels: xs,
                     datasets: [{
-                        label: ':מפלס המים ביום זה',
+                        label: ':מפלס המים',
                         //backgroundColor: 'rgb(0, 99, 132)',
                         borderColor: 'rgb(0, 0, 255)',
                         data: ys,
@@ -60,9 +80,9 @@
                 options: {
                     scales: {
                         yAxes: [{
-                            ticks:{
-                                callback: function(value, index, values){
-                                    return value +' m';
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return value + ' m';
                                 }
                             }
                         }]

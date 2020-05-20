@@ -1,0 +1,19 @@
+{
+  "name": "waterlevel",
+  "version": "1.0.0",
+  "description": "plots the function of the kinneret's water level, based on data from data.gov.il",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "kinneret",
+    "water",
+    "level"
+  ],
+  "author": "moshe bergwerk",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
